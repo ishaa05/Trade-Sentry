@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+
+<div id="scatter-plot"></div>
+
+<script>
+  var quantity_list = {{ quantity_list | tojson }};
+  var anomaly_list = {{ anomaly_list | tojson }};
+
+  var indexNumbers = Array.from(Array(quantity_list.length).keys());
+
+  var traceNormal = {
+    x: indexNumbers.filter((_, i) => anomaly_list[i] === 1),
+    y: quantity_list.filter((_, i) => anomaly_list[i] === 1),
+    mode: 'markers',
+    type: 'scatter',
+    name: 'Normal',
+    marker: {color: 'red'}
+  };
+
+  var traceAnomaly = {
+    x: indexNumbers.filter((_, i) => anomaly_list[i] === -1),
+    y: quantity_list.filter((_, i) => anomaly_list[i] === -1),
+    mode: 'markers',
+    type: 'scatter',
+    name: 'Anomaly',
+    marker: {color: 'blue'}
+  };
+
+  var data = [traceNormal, traceAnomaly];
+
+  var layout = {
+    title: 'Anomalies Detected by Isolation Forest',
+    xaxis: {title: 'Index Number', range: [0,800001], dtick: 200000},
+    yaxis: {title: 'Close', range: [200, 1400], dtick: 200},
+    showlegend: true
+  };
+
+  Plotly.newPlot('scatter-plot', data, layout, {responsive: false});
+</script>
+
+</body>
+</html>
